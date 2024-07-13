@@ -26,8 +26,21 @@ const db = getDatabase(app);
 let dbRef = ref(db);
 let dbSnapshot = get(dbRef);
 let dbData;
+console.log("hello");
+
 dbSnapshot.then((Snapshot) => {
   dbData = Snapshot.val();
+  let chatString;
+  let chatHTML = "";
+  for (const [key, values] of Object.entries(dbData["message"])) {
+      chatString = `<p>
+      ${values["userID"]}
+      ${values["content"]}
+      ${values["time"]}
+      </p>`
+      chatHTML += chatString;
+  }
+  document.getElementById("history-message").innerHTML = chatHTML;
 });
 
 
@@ -39,18 +52,6 @@ document.getElementById("logout").addEventListener("click",function(e){
     window.localStorage.clear();
     window.location = "login.html";
 })
-
-// var date = new Date();
-// var time = `${date.getHours()}:${date.getMinutes()}`
-// set(ref(db,'message/'),
-//     {
-//         "1":{
-//             "userID": currentUserId,
-//             "content":"hello",
-//             "time": time
-//             }
-//     }
-// )
 
 document.getElementById("message").addEventListener('keypress', function(e){
     if (e.key === 'Enter'){
@@ -69,7 +70,18 @@ document.getElementById("message").addEventListener('keypress', function(e){
         dbSnapshot = get(dbRef);
         dbSnapshot.then((Snapshot) => {
             dbData = Snapshot.val();
+            let chatString;
+            let chatHTML = "";
+            for (const [key, values] of Object.entries(dbData["message"])) {
+                chatString = `<p>
+                ${values["userID"]}
+                ${values["content"]}
+                ${values["time"]}
+                </p>`
+                chatHTML += chatString;
+            }
+            document.getElementById("history-message").innerHTML = chatHTML;
             });
-        document.getElementById("message").value = ""
+        document.getElementById("message").value = "";
     }
 })
