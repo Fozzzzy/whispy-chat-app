@@ -77,3 +77,8 @@ document.getElementById("register-submit").addEventListener("click",function(e){
   document.getElementById("register-password").value = "";
   document.getElementById("register-userID").value = "";
 })
+
+document.getElementById("login").addEventListener("click",function(e){
+  e.preventDefault;
+  window.location = "login.html";
+})

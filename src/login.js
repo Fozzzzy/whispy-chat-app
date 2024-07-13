@@ -40,10 +40,13 @@ document.getElementById("login-submit").addEventListener("click",function(e){
         alert("Invalid input");
         return false;
       } 
+    //searchs every user
     for (const [key, values] of Object.entries(dbData["user"])) {
         if (values["email"]==email){
             if (values["password"]==password){
-                console.log("login successful, welcome",key);
+                alert("login successful");
+                window.localStorage.setItem("currentUserId",key)
+                window.location = "test.html";
                 return false;
             }
             else{
@@ -54,3 +57,8 @@ document.getElementById("login-submit").addEventListener("click",function(e){
     alert("email is not register");
     return false;
 })
+
+document.getElementById("register").addEventListener("click",function(e){
+    e.preventDefault;
+    window.location = "register.html";
+  })
