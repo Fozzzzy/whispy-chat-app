@@ -48,6 +48,7 @@ form.addEventListener('submit', async function (e) {
 
     // Check addFriend function return true or not
     let result = await addFriend(currentUserId, friendId);
+    form.reset();
     if (result === true) {
         alert("Friend successfully added");
     } else {
