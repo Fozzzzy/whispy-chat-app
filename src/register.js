@@ -80,5 +80,5 @@ document.getElementById("register-submit").addEventListener("click",function(e){
 
 document.getElementById("login").addEventListener("click",function(e){
   e.preventDefault;
-  window.location = "login.html";
+  window.location = "index.html";
 })
