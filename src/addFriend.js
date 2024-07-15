@@ -83,10 +83,52 @@ async function addFriend(currentUserId, friendId) {
             alert("Already friends with this user");
             return false;
         }   
-
+        // Create an index for current user and friend user
+        const currentUserFriendIndex = currentUserFriends.length;
+        const friendIndex = dbData["user"][friendId]["friends"].length;
         // Write friendID to db
-        await set(ref(db, `user/${currentUserId}/friends/${friendId}`), true);
-        await set(ref(db, `user/${friendId}/friends/${currentUserId}`), true);
+        await set(ref(db, `user/${currentUserId}/friends/${currentUserFriendIndex}`), friendId);
+        await set(ref(db, `user/${friendId}/friends/${friendIndex}`), currentUserId);
+        let result = await addChat(currentUserId, friendId);
+        //Update the var dbData
+        dbRef = ref(db);
+        dbSnapshot = get(dbRef);
+        dbSnapshot.then((Snapshot) => {
+            dbData = Snapshot.val();
+            });
+        return true;
+
+    } catch (error) {
+        // Check if error
+        console.log(`${error}`);
+    }
+}
+
+//Instantly adds a chat between user and friend
+async function addChat(currentUserId, friendId) {
+    try {
+        const chatID = currentUserId + friendId;
+        // Write new chat to db
+        await set(ref(db, `chat/${chatID}`),
+            {
+                member:{1:currentUserId,2:friendId},
+                historyMessage:{0:{
+                    userID:0,
+                    content:0,
+                    time:0
+                }}
+            }
+        );
+        const userIndex = dbData["user"][currentUserId]["chat"].length;
+        const friendIndex = dbData["user"][friendId]["chat"].length;
+        await set(ref(db, `user/${currentUserId}/chat/${userIndex}`),chatID);
+        await set(ref(db, `user/${friendId}/chat/${friendIndex}`),chatID);
+        //Update the var dbData
+        dbRef = ref(db);
+        dbSnapshot = get(dbRef);
+        dbSnapshot.then((Snapshot) => {
+            dbData = Snapshot.val();
+            });
         return true;
 
     } catch (error) {

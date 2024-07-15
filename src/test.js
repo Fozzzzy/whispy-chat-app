@@ -30,18 +30,49 @@ console.log("hello");
 
 dbSnapshot.then((Snapshot) => {
   dbData = Snapshot.val();
+  let chatIdString;
+  let chatIdHTML;
+  for (const [key,chatId] of Object.entries(dbData["user"][currentUserId]["chat"])){
+    if (key !== "0"){
+        chatIdString = `<option value=${chatId}>${chatId}</option>`;
+        chatIdHTML += chatIdString;
+    }
+  }
+  document.getElementById("chatList").innerHTML = chatIdHTML;
+
+  let selectedChat = document.getElementById("chatList").value;
   let chatString;
   let chatHTML = "";
-  for (const [key, values] of Object.entries(dbData["message"])) {
-      chatString = `<p>
-      ${values["userID"]}
-      ${values["content"]}
-      ${values["time"]}
-      </p>`
-      chatHTML += chatString;
+  for (const [key, values] of Object.entries(dbData["chat"][selectedChat]["historyMessage"])) {
+    if (key !== "0"){
+        chatString = `<p>
+        ${values["userID"]}:
+        ${values["content"]}
+        (${values["time"]})
+        </p>`
+        chatHTML += chatString;
+    }
   }
   document.getElementById("history-message").innerHTML = chatHTML;
 });
+
+document.getElementById("chatList").addEventListener("click",function(e){
+    e.preventDefault;
+    let selectedChat = document.getElementById("chatList").value;
+    let chatString;
+    let chatHTML = "";
+    for (const [key, values] of Object.entries(dbData["chat"][selectedChat]["historyMessage"])) {
+        if (key !== "0"){
+            chatString = `<p>
+            ${values["userID"]}:
+            ${values["content"]}
+            (${values["time"]})
+            </p>`
+            chatHTML += chatString;
+        }
+    }
+    document.getElementById("history-message").innerHTML = chatHTML;
+})
 
 
 let currentUserId = window.localStorage.getItem("currentUserId");
@@ -58,13 +89,25 @@ document.getElementById("addFriend").addEventListener("click",function(e){
     window.location = "addFriend.html";
 })
 
+document.getElementById("resetFriend").addEventListener("click",function(e){
+    e.preventDefault;
+    for (const [key, values] of Object.entries(dbData["user"])) {
+        set(ref(db,"user/"+key+"/"+"friends"),
+            {0:""}
+        )
+        set(ref(db,"user/"+key+"/"+"chat"),
+            {0:""}
+        )
+    }
+})
 document.getElementById("message").addEventListener('keypress', function(e){
     if (e.key === 'Enter'){
         const text = document.getElementById("message").value;
+        const selectedChat = document.getElementById("chatList").value;
         const date = new Date();
         const time = `${date.getHours()}:${date.getMinutes()}`;
-        let count = dbData["message"].length;
-        set(ref(db,"message/"+count),
+        let count = dbData["chat"][selectedChat]["historyMessage"].length;
+        set(ref(db,"chat/"+selectedChat+"/"+"historyMessage/"+count),
             {
                 "userID": currentUserId,
                 "content":text,
@@ -75,15 +118,18 @@ document.getElementById("message").addEventListener('keypress', function(e){
         dbSnapshot = get(dbRef);
         dbSnapshot.then((Snapshot) => {
             dbData = Snapshot.val();
+            let selectedChat = document.getElementById("chatList").value;
             let chatString;
             let chatHTML = "";
-            for (const [key, values] of Object.entries(dbData["message"])) {
-                chatString = `<p>
-                ${values["userID"]}
-                ${values["content"]}
-                ${values["time"]}
-                </p>`
-                chatHTML += chatString;
+            for (const [key, values] of Object.entries(dbData["chat"][selectedChat]["historyMessage"])) {
+                if (key !== "0"){
+                    chatString = `<p>
+                    ${values["userID"]}:
+                    ${values["content"]}
+                    (${values["time"]})
+                    </p>`
+                    chatHTML += chatString;
+                }
             }
             document.getElementById("history-message").innerHTML = chatHTML;
             });
