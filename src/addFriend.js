@@ -86,6 +86,7 @@ async function addFriend(currentUserId, friendId) {
 
         // Write friendID to db
         await set(ref(db, `user/${currentUserId}/friends/${friendId}`), true);
+        await set(ref(db, `user/${friendId}/friends/${currentUserId}`), true);
         return true;
 
     } catch (error) {
