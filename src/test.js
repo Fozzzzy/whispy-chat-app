@@ -53,6 +53,11 @@ document.getElementById("logout").addEventListener("click",function(e){
     window.location = "login.html";
 })
 
+document.getElementById("addFriend").addEventListener("click",function(e){
+    e.preventDefault;
+    window.location = "addFriend.html";
+})
+
 document.getElementById("message").addEventListener('keypress', function(e){
     if (e.key === 'Enter'){
         const text = document.getElementById("message").value;
