@@ -68,7 +68,7 @@ async function addFriend(currentUserId, friendId) {
     try {
         // Check if friend userID exists in db
         const friendExists = await checkUserExists(friendId);
-        if (!friendExists) {
+        if (!friendExists||currentUserId == friendId) {
             alert("Friend user does not exist");
             return false;
         }
