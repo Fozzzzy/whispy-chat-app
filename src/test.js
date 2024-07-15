@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-import { getDatabase,ref,set,get } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+import { getDatabase,ref,set,get,onValue } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -24,12 +24,9 @@ const db = getDatabase(app);
 
 // declare dbData variable as datatype=object
 let dbRef = ref(db);
-let dbSnapshot = get(dbRef);
 let dbData;
-console.log("hello");
-
-dbSnapshot.then((Snapshot) => {
-  dbData = Snapshot.val();
+onValue(dbRef, (snapshot) =>{
+  dbData = snapshot.val();
   let chatIdString;
   let chatIdHTML;
   for (const [key,chatId] of Object.entries(dbData["user"][currentUserId]["chat"])){
@@ -54,7 +51,7 @@ dbSnapshot.then((Snapshot) => {
     }
   }
   document.getElementById("history-message").innerHTML = chatHTML;
-});
+})
 
 document.getElementById("chatList").addEventListener("click",function(e){
     e.preventDefault;
@@ -81,7 +78,7 @@ document.getElementById("test").innerText = `current user ID = ${currentUserId}`
 document.getElementById("logout").addEventListener("click",function(e){
     e.preventDefault;
     window.localStorage.clear();
-    window.location = "login.html";
+    window.location = "index.html";
 })
 
 document.getElementById("addFriend").addEventListener("click",function(e){
@@ -100,39 +97,20 @@ document.getElementById("resetFriend").addEventListener("click",function(e){
         )
     }
 })
-document.getElementById("message").addEventListener('keypress', function(e){
+document.getElementById("message").addEventListener('keypress', async function(e){
     if (e.key === 'Enter'){
         const text = document.getElementById("message").value;
         const selectedChat = document.getElementById("chatList").value;
         const date = new Date();
         const time = `${date.getHours()}:${date.getMinutes()}`;
         let count = dbData["chat"][selectedChat]["historyMessage"].length;
-        set(ref(db,"chat/"+selectedChat+"/"+"historyMessage/"+count),
+        await set(ref(db,"chat/"+selectedChat+"/"+"historyMessage/"+count),
             {
                 "userID": currentUserId,
                 "content":text,
                 "time": time
             }
         )
-        dbRef = ref(db);
-        dbSnapshot = get(dbRef);
-        dbSnapshot.then((Snapshot) => {
-            dbData = Snapshot.val();
-            let selectedChat = document.getElementById("chatList").value;
-            let chatString;
-            let chatHTML = "";
-            for (const [key, values] of Object.entries(dbData["chat"][selectedChat]["historyMessage"])) {
-                if (key !== "0"){
-                    chatString = `<p>
-                    ${values["userID"]}:
-                    ${values["content"]}
-                    (${values["time"]})
-                    </p>`
-                    chatHTML += chatString;
-                }
-            }
-            document.getElementById("history-message").innerHTML = chatHTML;
-            });
         document.getElementById("message").value = "";
     }
 })
