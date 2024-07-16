@@ -1,0 +1,209 @@
+
+.left-column {
+    background-color: #050414;
+    height: 100vh;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    background-color: #f8f9fa; 
+}
+
+
+.box {
+    width: 100%;
+    max-width: 700px;
+    min-width: 400px;
+    padding: 2rem;
+}
+
+.box-2 {
+    width: 100%;
+}
+
+h1 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+h4 {
+    font-size: 1rem;
+    color: white;
+}
+
+.input-group {
+    margin-block: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+  
+.input-group label {
+    display: block;
+    color: rgba(156, 163, 175, 1);
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid rgba(55, 65, 81, 1);
+    outline: 0;
+    background-color: rgba(17, 24, 39, 1);
+    padding: 0.75rem 1rem;
+    color: rgba(243, 244, 246, 1);
+}
+
+.input-group input:focus {
+    transition: all 0.3s ease-in-out;
+    border-color: rgba(167, 139, 250);
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.eye {
+    color: rgba(255, 255, 255, 0.2);
+    position: absolute;
+    height: 25px;
+    top: 10px;
+    right: 14px;
+    cursor: pointer;
+}
+
+.hide {
+    visibility: hidden;
+}
+
+
+.sign {
+    display: block;
+    margin-block: 1rem;
+    width: 100%;
+    background-color: rgb(129, 87, 255);
+    padding: 0.75rem;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.sign:hover {
+    background-color: rgb(108, 73, 216);
+}
+.sign:active {
+    opacity: 0.8;
+}
+
+.auth-redirect a {
+    color: rgb(143, 166, 231);
+    text-decoration: none;
+}
+
+.auth-redirect a:hover {
+    text-decoration: underline rgba(167, 139, 250, 1);
+}
+
+.auth-redirect {
+    text-align: center;
+    line-height: 1rem;
+    color: rgba(156, 163, 175, 1);
+    cursor: pointer;
+}
+
+
+.right-column {
+    position: relative;
+    height: 100vh;
+    overflow: hidden; 
+}
+
+.right-column::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url(/src/images/background/background-login.avif);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: brightness(0.6);
+    z-index: 1; 
+}
+
+.right-column > * {
+    position: relative;
+    z-index: 2; 
+}
+
+.whispy-logo {
+    font-family: 'Raleway', Helvetica, sans-serif;
+    font-size: 5rem;
+    font-weight: 500;
+    letter-spacing: 5px;
+    text-shadow: 0 0 15px rgb(255, 255, 255);
+    color: white;
+}
+
+.whispy-slogan {
+    font-size: 1.8rem;
+    font-family: Helvetica, sans-serif;
+    font-weight: 500;
+    color: rgb(255, 237, 254);
+    letter-spacing: 0.4rem;
+}
+
+.moving-image {
+    height: 250px;
+    width: auto;
+    object-fit: cover;
+    object-position: left center;
+    transition: all 3s ease-in-out;
+    animation: move 6s infinite ease-in-out;
+    cursor: grab;
+}
+
+.moving-image:active {
+    cursor: grabbing;
+}
+
+@keyframes move {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    25% {
+        transform: translateY(-0.5em) translateX(-0.5em);
+        rotate: -5deg;
+    }
+    50% {
+        transform: translateY(0.5em) translateX(-0.5em);
+    }
+    75% {
+        transform: translateY(-0.5em) translateX(0.5em);
+        rotate: 5deg;
+    }
+    100% {
+        transform: translateX(0) translateY(0);
+    }
+}
+
+/* @media (max-width: 1290px) {
+    .whispy-logo {
+        font-size: 4rem;
+    }
+    .whispy-slogan {
+        font-size: 1rem;
+    }
+    .moving-image {
+        height: 150px;
+    }
+} */
+
+@media (max-width: 435px) {
+    .auth-redirect {
+        font-size: 0.8rem;
+    }
+}

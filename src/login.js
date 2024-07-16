@@ -58,16 +58,38 @@ document.getElementById("login-submit").addEventListener("click",function(e){
     return false;
 })
 
+// Page redirect
 document.getElementById("register").addEventListener("click",function(e){
     e.preventDefault();
     window.location.href = "register.html";
 })
 
-document.getElementById("login").addEventListener("click",function(e){
+document.getElementById("login-submit").addEventListener("click",function(e){
   e.preventDefault();
   window.location.href = "test.html";
 })
 
+// Make password visible/hidden
 const togglePasswordButton = document.querySelector('#toggle-password');
 const eyeClosed = document.querySelector('#closed-eye');
 const eyeOpened = document.querySelector('#opened-eye');
+const passwordElement = document.querySelector('#login-password');
+let isPasswordVisible = false;
+
+togglePasswordButton.addEventListener("click", function(e) {
+    e.preventDefault();
+
+    if (isPasswordVisible) {
+        // Hide the password
+        passwordElement.type = 'password';
+        eyeClosed.classList.remove('hide');
+        eyeOpened.classList.add('hide');
+    } else {
+        // Show the password
+        passwordElement.type = 'text';
+        eyeClosed.classList.add('hide');
+        eyeOpened.classList.remove('hide');
+    }
+    
+    isPasswordVisible = !isPasswordVisible;
+});
