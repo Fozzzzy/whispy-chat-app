@@ -149,7 +149,7 @@ h4 {
 }
 
 .whispy-slogan {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-family: Helvetica, sans-serif;
     font-weight: 500;
     color: rgb(255, 237, 254);
@@ -157,7 +157,7 @@ h4 {
 }
 
 .moving-image {
-    height: 250px;
+    height: 200px;
     width: auto;
     object-fit: cover;
     object-position: left center;
@@ -189,18 +189,6 @@ h4 {
         transform: translateX(0) translateY(0);
     }
 }
-
-/* @media (max-width: 1290px) {
-    .whispy-logo {
-        font-size: 4rem;
-    }
-    .whispy-slogan {
-        font-size: 1rem;
-    }
-    .moving-image {
-        height: 150px;
-    }
-} */
 
 @media (max-width: 435px) {
     .auth-redirect {
