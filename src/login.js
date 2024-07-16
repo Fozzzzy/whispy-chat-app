@@ -32,7 +32,7 @@ dbSnapshot.then((Snapshot) => {
 
 document.getElementById("login-submit").addEventListener("click",function(e){
     //var declaration
-    e.preventDefault;
+    e.preventDefault();
     let email = document.getElementById("login-email").value;
     let password = document.getElementById("login-password").value;
     //checks if input is null
@@ -59,6 +59,15 @@ document.getElementById("login-submit").addEventListener("click",function(e){
 })
 
 document.getElementById("register").addEventListener("click",function(e){
-    e.preventDefault;
-    window.location = "register.html";
-  })
+    e.preventDefault();
+    window.location.href = "register.html";
+})
+
+document.getElementById("login").addEventListener("click",function(e){
+  e.preventDefault();
+  window.location.href = "test.html";
+})
+
+const togglePasswordButton = document.querySelector('#toggle-password');
+const eyeClosed = document.querySelector('#closed-eye');
+const eyeOpened = document.querySelector('#opened-eye');

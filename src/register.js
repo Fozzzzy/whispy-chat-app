@@ -33,7 +33,7 @@ dbSnapshot.then((Snapshot) => {
 
 document.getElementById("register-submit").addEventListener("click",function(e){
   //var declaration
-  e.preventDefault;
+  e.preventDefault();
   let name = document.getElementById("register-name").value;
   let email = document.getElementById("register-email").value;
   let password = document.getElementById("register-password").value;
@@ -70,6 +70,7 @@ document.getElementById("register-submit").addEventListener("click",function(e){
   dbSnapshot = get(dbRef);
   dbSnapshot.then((Snapshot) => {
     dbData = Snapshot.val();
+    window.location.href = "index.html";
   });
   //refresh the input value to null
   document.getElementById("register-name").value = "";
@@ -79,6 +80,6 @@ document.getElementById("register-submit").addEventListener("click",function(e){
 })
 
 document.getElementById("login").addEventListener("click",function(e){
-  e.preventDefault;
-  window.location = "index.html";
+  e.preventDefault();
+  window.location.href = "index.html";
 })
