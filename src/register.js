@@ -31,55 +31,58 @@ dbSnapshot.then((Snapshot) => {
 });
 
 
-document.getElementById("register-submit").addEventListener("click",function(e){
-  //var declaration
+document.querySelector("form").addEventListener("submit", async function(e) {
+  // Check input validation
+  if (!this.checkValidity()) {
+    // Let the browser handle invalid form
+    return;
+  }
+
   e.preventDefault();
   let name = document.getElementById("register-name").value;
   let email = document.getElementById("register-email").value;
   let password = document.getElementById("register-password").value;
   let userID = document.getElementById("register-userID").value;
-  //checks if input is null
-  if (name==""||email==""||password==""||userID==""){
-    alert("Invalid input");
-    return false;
-  } 
-  //checks any similar userID and email;
+
+
+  // Check any similar userID and email;
   for (const [key, values] of Object.entries(dbData["user"])) {
     if (key == userID){
-      alert("whispID has already been taken");
-      return false;
+      alert("This whispID is already taken. Try a different one");
+      this.reset();
+      return;
     }
     if (values["email"]==email){
-      alert("email has been registered");
-      return false;
+      alert("An account with this email already exists");
+      this.reset();
+      return;
     }
   }
-  //create new user into the database
-  set(ref(db,"user/" + userID),
-  {
-    chat:{0:""},
-    description:"",
-    displayName:name,
-    email:email,
-    friends:{0:""},
-    password:password
-  });
-  alert("Registration success");
-  //refreshes the variable dbData to now database (!!always refresh after using set!!)
-  dbRef = ref(db);
-  dbSnapshot = get(dbRef);
-  dbSnapshot.then((Snapshot) => {
-    dbData = Snapshot.val();
+  try {
+    // Create new user into the database
+    await set(ref(db,"user/" + userID),
+    {
+      chat:{0:""},
+      description:"",
+      displayName:name,
+      email:email,
+      friends:{0:""},
+      password:password
+    });
+    alert("Registration success");
+  
+    // Refreshes the variable dbData to now database (!!always refresh after using set!!)
+    dbRef = ref(db);
+    dbSnapshot = await get(dbRef);
+    dbData = dbSnapshot.val();
+
     window.location.href = "index.html";
-  });
-  //refresh the input value to null
-  document.getElementById("register-name").value = "";
-  document.getElementById("register-email").value = "";
-  document.getElementById("register-password").value = "";
-  document.getElementById("register-userID").value = "";
+  } catch (error) {
+    console.error("Error during registration", error);
+  }
 })
 
-document.getElementById("login").addEventListener("click",function(e){
+document.getElementById("login").addEventListener("click", function(e){
   e.preventDefault();
   window.location.href = "index.html";
 })

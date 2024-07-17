@@ -30,44 +30,55 @@ dbSnapshot.then((Snapshot) => {
   dbData = Snapshot.val();
 });
 
-document.getElementById("login-submit").addEventListener("click",function(e){
-    //var declaration
+
+let emailFound = false;
+let passwordCorrect = false;
+let userId = null;
+
+document.querySelector("form").addEventListener("submit", async function(e) {
+  // Check input validation
+  if (!this.checkValidity()) {
+    // Let the browser handle invalid form
+    return;
+  }
     e.preventDefault();
     let email = document.getElementById("login-email").value;
     let password = document.getElementById("login-password").value;
-    //checks if input is null
-    if (email==""||password==""){
-        alert("Invalid input");
-        return false;
-      } 
+
     //searchs every user
     for (const [key, values] of Object.entries(dbData["user"])) {
-        if (values["email"]==email){
-            if (values["password"]==password){
-                alert("login successful");
-                window.localStorage.setItem("currentUserId",key)
-                window.location = "test.html";
-                return false;
-            }
-            else{
-                alert("wrong password");
-            }
+      if (values["email"]==email){
+        emailFound = true;
+          if (values["password"]==password){
+            passwordCorrect = true;
+            userId = key;
+            break;
+          }
         }
+      }
+      
+    if (emailFound) {
+      if (passwordCorrect) {
+        alert("Login successful");
+        window.localStorage.setItem("currentUserId", userId);
+        window.location = "test.html";
+      } else {
+        alert("Wrong password");
+      }
+    } else {
+      alert("Email is not registered");
     }
-    alert("email is not register");
-    return false;
+
+    this.reset();
+    return;
 })
 
 // Page redirect
-document.getElementById("register").addEventListener("click",function(e){
+document.getElementById("register").addEventListener("click", function(e){
     e.preventDefault();
     window.location.href = "register.html";
 })
 
-document.getElementById("login-submit").addEventListener("click",function(e){
-  e.preventDefault();
-  window.location.href = "test.html";
-})
 
 // Make password visible/hidden
 const togglePasswordButton = document.querySelector('#toggle-password');
