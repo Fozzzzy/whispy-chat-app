@@ -111,7 +111,7 @@ async function addChat(currentUserId, friendId) {
         // Write new chat to db
         await set(ref(db, `chat/${chatID}`),
             {
-                member:{1:currentUserId,2:friendId},
+                member:{0:"",1:currentUserId,2:friendId},
                 historyMessage:{0:{
                     userID:0,
                     content:0,

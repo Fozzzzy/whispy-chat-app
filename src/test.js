@@ -109,6 +109,12 @@ document.getElementById("addFriend").addEventListener("click",function(e){
     window.location = "addFriend.html";
 })
 
+//change page to addGroupChat
+document.getElementById("addGroupChat").addEventListener("click",function(e){
+    e.preventDefault;
+    window.location = "addGroupChat.html";
+})
+
 // Dont press this unless u want to reset the friends all users have to zero
 document.getElementById("resetFriend").addEventListener("click",function(e){
     e.preventDefault;
