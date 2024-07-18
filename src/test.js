@@ -23,66 +23,33 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // declare variable
-let selectedChat;
-let chatArr;
+let selectedChat; // to know which chat is being selected currently by the user
+let chatArr; // stores all the chats that this user have with position (order)
 let dbRef = ref(db);
 let dbSnapshot = get(dbRef);
-let dbData;
-let unreadChat;
-let currentUserId = window.localStorage.getItem("currentUserId");
+let dbData; //sets the database as an object variable
+let unreadChat; // stores all the chats that this user have as the KEY and number of unread messages as the VALUE
+let currentUserId = window.localStorage.getItem("currentUserId"); // get the currentUserId set by login.js
 document.getElementById("test").innerText = `current user ID = ${currentUserId}`;
 
-//Initialize the first look (This part doesnt refresh on new item being added in database historyMessage)
+//on start...
 dbSnapshot.then((Snapshot) => {
     dbData = Snapshot.val();
-    //Creates the chat list that this user have, then render it on the option list
     chatArr = dbData["user"][currentUserId]["chat"];
     selectedChat = chatArr[chatArr.length-1];
-    unreadChat = dbData["user"][currentUserId]["unreadChat"];
     renderHistoryMessage();
-    console.log(chatArr);
-    let chatIdString;
-    let chatIdHTML = "";
-    for(let i=chatArr.length-1;i>0;i--){
-        chatIdString = `<button id="chat-${i}">${chatArr[i]} (${unreadChat[chatArr[i]]})</button><br>`;
-        chatIdHTML += chatIdString;
-    }
-    document.getElementById("chatList").innerHTML = chatIdHTML;
-
-    //Picks the selected chat, then render the history chat of the selected chat
-    for(let i=chatArr.length-1;i>0;i--){
-        document.getElementById(`chat-${i}`).addEventListener("click",function(e){
-            e.preventDefault;
-            console.log(`chat-${i}: ${chatArr[i]}`)
-            selectedChat = chatArr[i];
-            renderHistoryMessage();
-        })
-    }
+    renderChatList();
     });
 
-//Refreshes the historychat everytime new item/child is added in database (historyMessage)
+//everytime database is refreshed...
 onValue(dbRef, (snapshot) =>{
     dbData = snapshot.val();
     const chatLength = dbData["chat"][selectedChat]["historyMessage"].length;
+    //sets the last message that current user sends read by status to true
     set(ref(db,"chat/" + selectedChat + "/historyMessage/" + (chatLength-1) + "/readBy/" + currentUserId),true);
+    //refreshes history message and chatlist
     renderHistoryMessage();
-    chatArr = dbData["user"][currentUserId]["chat"];
-    unreadChat = dbData["user"][currentUserId]["unreadChat"];
-    let chatIdString;
-    let chatIdHTML = "";
-    for(let i=chatArr.length-1;i>0;i--){
-        chatIdString = `<button id="chat-${i}">${chatArr[i]} (${unreadChat[chatArr[i]]})</button><br>`;
-        chatIdHTML += chatIdString;
-    }
-    document.getElementById("chatList").innerHTML = chatIdHTML;
-    for(let i=chatArr.length-1;i>0;i--){
-        document.getElementById(`chat-${i}`).addEventListener("click",function(e){
-            e.preventDefault;
-            console.log(`chat-${i}: ${chatArr[i]}`)
-            selectedChat = chatArr[i];
-            renderHistoryMessage();
-        })
-    }
+    renderChatList();
 })
 
 //log out and clears currentUsedID value in localstorage
@@ -120,14 +87,15 @@ document.getElementById("resetFriend").addEventListener("click",function(e){
     }
 })
 
-//Everytime 'enter' is pressed in message input text, new item (the value of input text) is added to historyMessage, this triggers onValue function above to refresh the rendering of historyMessage
+//Everytime 'enter' is pressed in message input text....
 document.getElementById("message").addEventListener('keypress', function(e){
     if (e.key === 'Enter'){
         const text = document.getElementById("message").value;
         const date = new Date();
         const time = `${date.getHours()}:${date.getMinutes()}`;
         let count = dbData["chat"][selectedChat]["historyMessage"].length;
-        set(ref(db,"chat/"+selectedChat+"/"+"historyMessage/"+count),
+        //create new message and put it into database
+        set(ref(db,"chat/"+selectedChat+"/"+"historyMessage/"+count), 
             {
                 "userID": currentUserId,
                 "content":text,
@@ -139,17 +107,21 @@ document.getElementById("message").addEventListener('keypress', function(e){
         let userChatArr;
         let index;
         let unreadChatCount;
-        for (let i=1;i<memberArr.length;i++){
+        // for every member in the selected chat
+        for (let i=1;i<memberArr.length;i++){ 
             userChatArr = dbData["user"][memberArr[i]]["chat"];
             index = userChatArr.indexOf(selectedChat);
             userChatArr.splice(index,1);
             userChatArr.push(selectedChat);
+            // rearange the position of current member's chat list with selected chat on the top
             set(ref(db,"user/" + memberArr[i] + "/chat"),userChatArr);
-            console.log(memberArr[i]);
+            // set the message read by current member false (belum dibaca)
             set(ref(db,"chat/" + selectedChat + "/historyMessage/" + count + "/readBy/" + memberArr[i]),false);
-            if (memberArr[i] !== currentUserId) {
+            // except for current user id...
+            if (memberArr[i] !== currentUserId) { //
                 unreadChatCount = dbData["user" ][memberArr[i]]["unreadChat"][selectedChat];
                 unreadChatCount += 1;
+                //counts the sum of unread message by current member of the selected chat and put it to database
                 set(ref(db,"user/" + memberArr[i] + "/unreadChat/" + selectedChat),unreadChatCount);
             }
         }
@@ -157,6 +129,7 @@ document.getElementById("message").addEventListener('keypress', function(e){
 })
 
 function renderHistoryMessage(){
+    //rendering to html....
     let chatString;
     let chatHTML = "";
     const historyArr = dbData["chat"][selectedChat]["historyMessage"];
@@ -169,10 +142,32 @@ function renderHistoryMessage(){
         chatHTML += chatString;
     }
     document.getElementById("history-message").innerHTML = chatHTML;
+    // after rendering of a chat, reset the unread message of the chat to 0, set read by status to all messages to true for current user
     const chatLength = dbData["chat"][selectedChat]["historyMessage"].length
     const unreadChatCount = dbData["user" ][currentUserId]["unreadChat"][selectedChat];
     for (let i=chatLength-1;i>chatLength-1-unreadChatCount;i--){
         set(ref(db,"chat/" + selectedChat + "/historyMessage/" + i + "/readBy/" + currentUserId),true);
     }
     set(ref(db,"user/" + currentUserId + "/unreadChat/" + selectedChat),0);
+}
+
+function renderChatList(){
+    //rendering to html...
+    chatArr = dbData["user"][currentUserId]["chat"];
+    unreadChat = dbData["user"][currentUserId]["unreadChat"];
+    let chatIdString;
+    let chatIdHTML = "";
+    for(let i=chatArr.length-1;i>0;i--){
+        chatIdString = `<button id="chat-${i}">${chatArr[i]} (${unreadChat[chatArr[i]]})</button><br>`;
+        chatIdHTML += chatIdString;
+    }
+    document.getElementById("chatList").innerHTML = chatIdHTML;
+    //add a event listener for every button that is rendered. If clicked, the selectedChat value is set to the newest
+    for(let i=chatArr.length-1;i>0;i--){
+        document.getElementById(`chat-${i}`).addEventListener("click",function(e){
+            e.preventDefault;
+            selectedChat = chatArr[i];
+            renderHistoryMessage();
+        })
+    }
 }
