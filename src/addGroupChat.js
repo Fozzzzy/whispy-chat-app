@@ -156,6 +156,7 @@ async function addChat(arr) {
         console.log(arr[i]);
         userIndex = dbData["user"][arr[i]]["chat"].length;
         set(ref(db, `user/${arr[i]}/chat/${userIndex}`),chatID);
+        set(ref(db, `user/${arr[i]}/unreadChat/${chatID}`),0);
       }
       window.location = "test.html";
       

@@ -63,6 +63,8 @@ dbSnapshot.then((Snapshot) => {
 //Refreshes the historychat everytime new item/child is added in database (historyMessage)
 onValue(dbRef, (snapshot) =>{
     dbData = snapshot.val();
+    const chatLength = dbData["chat"][selectedChat]["historyMessage"].length;
+    set(ref(db,"chat/" + selectedChat + "/historyMessage/" + (chatLength-1) + "/readBy/" + currentUserId),true);
     renderHistoryMessage();
     chatArr = dbData["user"][currentUserId]["chat"];
     unreadChat = dbData["user"][currentUserId]["unreadChat"];
@@ -112,6 +114,9 @@ document.getElementById("resetFriend").addEventListener("click",function(e){
         set(ref(db,"user/"+key+"/"+"chat"),
             {0:""}
         )
+        set(ref(db,"user/"+key+"/"+"unreadChat"),
+            null
+        )
     }
 })
 
@@ -140,9 +145,10 @@ document.getElementById("message").addEventListener('keypress', function(e){
             userChatArr.splice(index,1);
             userChatArr.push(selectedChat);
             set(ref(db,"user/" + memberArr[i] + "/chat"),userChatArr);
+            console.log(memberArr[i]);
+            set(ref(db,"chat/" + selectedChat + "/historyMessage/" + count + "/readBy/" + memberArr[i]),false);
             if (memberArr[i] !== currentUserId) {
                 unreadChatCount = dbData["user" ][memberArr[i]]["unreadChat"][selectedChat];
-                console.log(unreadChatCount);
                 unreadChatCount += 1;
                 set(ref(db,"user/" + memberArr[i] + "/unreadChat/" + selectedChat),unreadChatCount);
             }
@@ -163,5 +169,10 @@ function renderHistoryMessage(){
         chatHTML += chatString;
     }
     document.getElementById("history-message").innerHTML = chatHTML;
+    const chatLength = dbData["chat"][selectedChat]["historyMessage"].length
+    const unreadChatCount = dbData["user" ][currentUserId]["unreadChat"][selectedChat];
+    for (let i=chatLength-1;i>chatLength-1-unreadChatCount;i--){
+        set(ref(db,"chat/" + selectedChat + "/historyMessage/" + i + "/readBy/" + currentUserId),true);
+    }
     set(ref(db,"user/" + currentUserId + "/unreadChat/" + selectedChat),0);
 }
