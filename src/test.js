@@ -92,7 +92,9 @@ document.getElementById("message").addEventListener('keypress', function(e){
     if (e.key === 'Enter'){
         const text = document.getElementById("message").value;
         const date = new Date();
-        const time = `${date.getHours()}:${date.getMinutes()}`;
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const time = `${hours}:${minutes}`;
         let count = dbData["chat"][selectedChat]["historyMessage"].length;
         //create new message and put it into database
         set(ref(db,"chat/"+selectedChat+"/"+"historyMessage/"+count), 
