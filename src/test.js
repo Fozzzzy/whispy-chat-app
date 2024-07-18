@@ -24,6 +24,7 @@ const db = getDatabase(app);
 
 // declare variable
 let selectedChat;
+let chatArr;
 let dbRef = ref(db);
 let dbSnapshot = get(dbRef);
 let dbData;
@@ -34,66 +35,33 @@ document.getElementById("test").innerText = `current user ID = ${currentUserId}`
 dbSnapshot.then((Snapshot) => {
     dbData = Snapshot.val();
     //Creates the chat list that this user have, then render it on the option list
+    chatArr = dbData["user"][currentUserId]["chat"];
+    selectedChat = chatArr[chatArr.length-1];
+    renderHistoryMessage();
+    console.log(chatArr);
     let chatIdString;
-    let chatIdHTML;
-    for (const [key,chatId] of Object.entries(dbData["user"][currentUserId]["chat"])){
-    if (key !== "0"){
-        chatIdString = `<option value=${chatId}>${chatId}</option>`;
+    let chatIdHTML = "";
+    for(let i=chatArr.length-1;i>0;i--){
+        chatIdString = `<button id="chat-${i}">${chatArr[i]}</button><br>`;
         chatIdHTML += chatIdString;
-    }}
+    }
     document.getElementById("chatList").innerHTML = chatIdHTML;
 
     //Picks the selected chat, then render the history chat of the selected chat
-    selectedChat = document.getElementById("chatList").value;
-    let chatString;
-    let chatHTML = "";
-    for (const [key, values] of Object.entries(dbData["chat"][selectedChat]["historyMessage"])) {
-    if (key !== "0"){
-        chatString = `<p>
-        ${values["userID"]}:
-        ${values["content"]}
-        (${values["time"]})
-        </p>`
-        chatHTML += chatString;
-    }}
-    document.getElementById("history-message").innerHTML = chatHTML;
+    for(let i=chatArr.length-1;i>0;i--){
+        document.getElementById(`chat-${i}`).addEventListener("click",function(e){
+            e.preventDefault;
+            console.log(`chat-${i}: ${chatArr[i]}`)
+            selectedChat = chatArr[i];
+            renderHistoryMessage();
+        })
+    }
     });
 
 //Refreshes the historychat everytime new item/child is added in database (historyMessage)
 onValue(dbRef, (snapshot) =>{
-  dbData = snapshot.val();
-  let chatString;
-  let chatHTML = "";
-  for (const [key, values] of Object.entries(dbData["chat"][selectedChat]["historyMessage"])) {
-    if (key !== "0"){
-        chatString = `<p>
-        ${values["userID"]}:
-        ${values["content"]}
-        (${values["time"]})
-        </p>`
-        chatHTML += chatString;
-    }
-  }
-  document.getElementById("history-message").innerHTML = chatHTML;
-})
-
-//Everytime option of chatlist got clicked, the history chat re-rendered based on the selected chat
-document.getElementById("chatList").addEventListener("click",function(e){
-    e.preventDefault;
-    selectedChat = document.getElementById("chatList").value;
-    let chatString;
-    let chatHTML = "";
-    for (const [key, values] of Object.entries(dbData["chat"][selectedChat]["historyMessage"])) {
-        if (key !== "0"){
-            chatString = `<p>
-            ${values["userID"]}:
-            ${values["content"]}
-            (${values["time"]})
-            </p>`
-            chatHTML += chatString;
-        }
-    }
-    document.getElementById("history-message").innerHTML = chatHTML;
+    dbData = snapshot.val();
+    renderHistoryMessage();
 })
 
 //log out and clears currentUsedID value in localstorage
@@ -145,3 +113,18 @@ document.getElementById("message").addEventListener('keypress', function(e){
         document.getElementById("message").value = "";
     }
 })
+
+function renderHistoryMessage(){
+    let chatString;
+    let chatHTML = "";
+    const historyArr = dbData["chat"][selectedChat]["historyMessage"];
+    for(let i=historyArr.length-1;i>0;i--){
+        chatString = `<p>
+        ${historyArr[i]["userID"]}:
+        ${historyArr[i]["content"]}
+        (${historyArr[i]["time"]})
+        </p>`
+        chatHTML += chatString;
+    }
+    document.getElementById("history-message").innerHTML = chatHTML;
+}

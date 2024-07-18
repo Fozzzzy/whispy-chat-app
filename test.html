@@ -10,13 +10,14 @@
     <button id="logout">logout</button>
     <button id="addFriend">Add friend</button><button id="addGroupChat">Add Group Chat</button>
     <button id="resetFriend">Reset friend (hati hati)</button><br>
-    <label for="chatList">Choose a chat:</label>
-    <select id="chatList">
-    </select><br><br>   
-
-    <input type="text" id="message">
-
-    <div id="history-message"></div>
+    <div style="display:flex;flex-direction:row">
+        <div id="chatList">
+        </div>
+        <div>
+            <div id="history-message" style="display: flex;flex-direction: column-reverse; background-color:azure;height:80vh ;overflow: auto;"></div>
+            <input type="text" id="message" style="width: 500px;">
+        </div>
+    </div>
     <script type=module src="src\test.js"></script>
 </body>
 </html>

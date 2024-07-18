@@ -23,8 +23,8 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const currentUserId = window.localStorage.getItem("currentUserId");
 
-export let friendArr;
-export let friendArrAdd = [''];
+let friendArr;
+let friendArrAdd = [''];
 // declare dbData variable as datatype=object
 let dbRef = ref(db);
 let dbSnapshot = get(dbRef);
@@ -109,7 +109,7 @@ async function renderFriendAdd(){
   }
 }
 
-document.getElementById("confirm").addEventListener("click",function(e){
+document.getElementById("confirm").addEventListener("click", async function(e){
   e.preventDefault;
   if (friendArrAdd.length < 2){
     alert("you must choose at least 2 friends");
@@ -120,6 +120,9 @@ document.getElementById("confirm").addEventListener("click",function(e){
   for (const [key, values] of Object.entries(dbData["user"][currentUserId]["chat"])) {
     if (key !== "0"){
       check = (dbData["chat"][values]['member']);
+      console.log(check);
+      console.log(friendArrAdd);
+      console.log(isEqual(check,friendArrAdd))
       if(isEqual(check,friendArrAdd)){
         alert("chat already exist");
         friendArrAdd.splice(friendArrAdd.length-1,1);
@@ -140,7 +143,7 @@ async function addChat(arr) {
       // Write new chat to db
       set(ref(db, `chat/${chatID}`),
           {
-              member:{arr},
+              member:arr,
               historyMessage:{0:{
                   userID:0,
                   content:0,
