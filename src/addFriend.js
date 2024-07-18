@@ -122,7 +122,9 @@ async function addChat(currentUserId, friendId) {
         const userIndex = dbData["user"][currentUserId]["chat"].length;
         const friendIndex = dbData["user"][friendId]["chat"].length;
         await set(ref(db, `user/${currentUserId}/chat/${userIndex}`),chatID);
+        await set(ref(db, `user/${currentUserId}/unreadChat/${chatID}`),0);
         await set(ref(db, `user/${friendId}/chat/${friendIndex}`),chatID);
+        await set(ref(db, `user/${friendId}/unreadChat/${chatID}`),0);
         //Update the var dbData
         dbRef = ref(db);
         dbSnapshot = get(dbRef);

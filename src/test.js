@@ -28,6 +28,7 @@ let chatArr;
 let dbRef = ref(db);
 let dbSnapshot = get(dbRef);
 let dbData;
+let unreadChat;
 let currentUserId = window.localStorage.getItem("currentUserId");
 document.getElementById("test").innerText = `current user ID = ${currentUserId}`;
 
@@ -37,12 +38,13 @@ dbSnapshot.then((Snapshot) => {
     //Creates the chat list that this user have, then render it on the option list
     chatArr = dbData["user"][currentUserId]["chat"];
     selectedChat = chatArr[chatArr.length-1];
+    unreadChat = dbData["user"][currentUserId]["unreadChat"];
     renderHistoryMessage();
     console.log(chatArr);
     let chatIdString;
     let chatIdHTML = "";
     for(let i=chatArr.length-1;i>0;i--){
-        chatIdString = `<button id="chat-${i}">${chatArr[i]}</button><br>`;
+        chatIdString = `<button id="chat-${i}">${chatArr[i]} (${unreadChat[chatArr[i]]})</button><br>`;
         chatIdHTML += chatIdString;
     }
     document.getElementById("chatList").innerHTML = chatIdHTML;
@@ -62,6 +64,23 @@ dbSnapshot.then((Snapshot) => {
 onValue(dbRef, (snapshot) =>{
     dbData = snapshot.val();
     renderHistoryMessage();
+    chatArr = dbData["user"][currentUserId]["chat"];
+    unreadChat = dbData["user"][currentUserId]["unreadChat"];
+    let chatIdString;
+    let chatIdHTML = "";
+    for(let i=chatArr.length-1;i>0;i--){
+        chatIdString = `<button id="chat-${i}">${chatArr[i]} (${unreadChat[chatArr[i]]})</button><br>`;
+        chatIdHTML += chatIdString;
+    }
+    document.getElementById("chatList").innerHTML = chatIdHTML;
+    for(let i=chatArr.length-1;i>0;i--){
+        document.getElementById(`chat-${i}`).addEventListener("click",function(e){
+            e.preventDefault;
+            console.log(`chat-${i}: ${chatArr[i]}`)
+            selectedChat = chatArr[i];
+            renderHistoryMessage();
+        })
+    }
 })
 
 //log out and clears currentUsedID value in localstorage
@@ -111,6 +130,23 @@ document.getElementById("message").addEventListener('keypress', function(e){
             }
         )
         document.getElementById("message").value = "";
+        const memberArr = dbData["chat"][selectedChat]["member"]
+        let userChatArr;
+        let index;
+        let unreadChatCount;
+        for (let i=1;i<memberArr.length;i++){
+            userChatArr = dbData["user"][memberArr[i]]["chat"];
+            index = userChatArr.indexOf(selectedChat);
+            userChatArr.splice(index,1);
+            userChatArr.push(selectedChat);
+            set(ref(db,"user/" + memberArr[i] + "/chat"),userChatArr);
+            if (memberArr[i] !== currentUserId) {
+                unreadChatCount = dbData["user" ][memberArr[i]]["unreadChat"][selectedChat];
+                console.log(unreadChatCount);
+                unreadChatCount += 1;
+                set(ref(db,"user/" + memberArr[i] + "/unreadChat/" + selectedChat),unreadChatCount);
+            }
+        }
     }
 })
 
@@ -127,4 +163,5 @@ function renderHistoryMessage(){
         chatHTML += chatString;
     }
     document.getElementById("history-message").innerHTML = chatHTML;
+    set(ref(db,"user/" + currentUserId + "/unreadChat/" + selectedChat),0);
 }
