@@ -66,36 +66,41 @@ async function checkUserExists(userId) {
 // Function to add friend
 async function addFriend(currentUserId, friendId) {
     try {
-        // Check if friend userID exists in db
-        const friendExists = await checkUserExists(friendId);
-        if (!friendExists||currentUserId == friendId) {
-            alert("Friend user does not exist");
-            return false;
-        }
-
         // Check if friend already added
         const currentUserFriendsRef = ref(db, `user/${currentUserId}/friends`);
         const currentUserFriendsSnapshot = await get(currentUserFriendsRef);
         const currentUserFriends = currentUserFriendsSnapshot.val() || {};
 
-        if (currentUserFriends[friendId]) {
-            console.log(this);
-            alert("Already friends with this user");
-            return false;
-        }   
+        if (Object.values(currentUserFriends).includes(friendId)) {
+            alert("Already friends with this user")
+            return;
+        }
+
+        // Check if friend userID exists in db
+        const friendExists = await checkUserExists(friendId);
+        if (!friendExists||currentUserId == friendId) {
+            alert("Friend user does not exist");
+            return;
+        }
+
+
         // Create an index for current user and friend user
-        const currentUserFriendIndex = currentUserFriends.length;
-        const friendIndex = dbData["user"][friendId]["friends"].length;
+        const currentUserFriendIndex = Object.keys(currentUserFriends).length;
+        const friendFriendsRef = ref(db, `user/${friendId}/friends`);
+        const friendFriendsSnapshot = await get(friendFriendsRef);
+        const friendFriends = friendFriendsSnapshot.val() || {};
+        const friendIndex = Object.keys(friendFriends).length;
+
         // Write friendID to db
         await set(ref(db, `user/${currentUserId}/friends/${currentUserFriendIndex}`), friendId);
         await set(ref(db, `user/${friendId}/friends/${friendIndex}`), currentUserId);
+
         let result = await addChat(currentUserId, friendId);
-        //Update the var dbData
+
+        // Update the var dbData
         dbRef = ref(db);
         dbSnapshot = get(dbRef);
-        dbSnapshot.then((Snapshot) => {
-            dbData = Snapshot.val();
-            });
+        dbData = dbSnapshot.val();
         return true;
 
     } catch (error) {
@@ -125,7 +130,8 @@ async function addChat(currentUserId, friendId) {
         await set(ref(db, `user/${currentUserId}/unreadChat/${chatID}`),0);
         await set(ref(db, `user/${friendId}/chat/${friendIndex}`),chatID);
         await set(ref(db, `user/${friendId}/unreadChat/${chatID}`),0);
-        //Update the var dbData
+
+        // Update the var dbData
         dbRef = ref(db);
         dbSnapshot = get(dbRef);
         dbSnapshot.then((Snapshot) => {
@@ -136,6 +142,7 @@ async function addChat(currentUserId, friendId) {
     } catch (error) {
         // Check if error
         console.log(`${error}`);
+        return "An error occured while adding chat"
     }
 }
 
