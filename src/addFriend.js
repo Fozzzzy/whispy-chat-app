@@ -122,7 +122,6 @@ async function addChat(currentUserId, friendId) {
                     content:0,
                     time:0
                 }},
-                isTyping:{currentUserId:false,friendId:false}
             }
         );
         const userIndex = dbData["user"][currentUserId]["chat"].length;
@@ -131,8 +130,8 @@ async function addChat(currentUserId, friendId) {
         await set(ref(db, `user/${currentUserId}/unreadChat/${chatID}`),0);
         await set(ref(db, `user/${friendId}/chat/${friendIndex}`),chatID);
         await set(ref(db, `user/${friendId}/unreadChat/${chatID}`),0);
-        await set(ref(db, `chat/${chatID}/isTyping/${friendId}`),false);
-        await set(ref(db, `chat/${chatID}/isTyping/${currentUserId}`),false);
+        await set(ref(db, `chat/${chatID}/isTyping/${friendId}`),{status: false,content:""});
+        await set(ref(db, `chat/${chatID}/isTyping/${currentUserId}`),{status: false,content:""});
 
         // Update the var dbData
         dbRef = ref(db);

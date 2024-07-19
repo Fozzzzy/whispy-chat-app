@@ -157,10 +157,9 @@ async function addChat(arr) {
           userIndex = dbData["user"][arr[i]]["chat"].length;
           set(ref(db, `user/${arr[i]}/chat/${userIndex}`),chatID);
           set(ref(db, `user/${arr[i]}/unreadChat/${chatID}`),0);
-          set(ref(db, `chat/${chatID}/isTyping/${arr[i]}`),false);
+          set(ref(db, `chat/${chatID}/isTyping/${arr[i]}`),{status:false,content:""});
       }
-      window.location = "test.html";
-      
+      // window.location = "test.html";
       return true;
 
   } catch (error) {

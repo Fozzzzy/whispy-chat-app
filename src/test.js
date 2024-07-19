@@ -38,6 +38,7 @@ dbSnapshot.then((Snapshot) => {
     dbData = Snapshot.val();
     chatArr = dbData["user"][currentUserId]["chat"];
     selectedChat = chatArr[chatArr.length-1];
+    renderTyping();
     renderHistoryMessage();
     renderChatList();
     });
@@ -55,28 +56,27 @@ onValue(dbRef, (snapshot) =>{
 
 //isActive isTyping feat
 set(ref(db,"user/" + currentUserId + "/isActive"),true);
-isTyping();
-    document.getElementById("message").addEventListener('keyup', function(e){
-        e.preventDefault;
-        isTyping();
-    })
+document.getElementById("message").addEventListener('keyup', function(e){
+    e.preventDefault;
+    const text = document.getElementById("message").value;
+    set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/content"),text);
+    updateStatusTyping(isTyping());
+})
+
 document.addEventListener('visibilitychange', function() {
     if (document.visibilityState === 'visible') {
         set(ref(db,"user/" + currentUserId + "/isActive"),true);
-        isTyping();
-        document.getElementById("message").addEventListener('keyup', function(e){
-            e.preventDefault;
-            isTyping();
-        })
+        updateStatusTyping(isTyping());
     } else {    
         set(ref(db,"user/" + currentUserId + "/isActive"),false);
-        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
+        updateStatusTyping(false);
     }
   });
 
 //log out and clears currentUsedID value in localstorage
 document.getElementById("logout").addEventListener("click",function(e){
     e.preventDefault;
+    updateStatusTyping(false);
     window.localStorage.clear();
     window.location = "index.html";
 })
@@ -84,12 +84,14 @@ document.getElementById("logout").addEventListener("click",function(e){
 //change page to addfriend
 document.getElementById("addFriend").addEventListener("click",function(e){
     e.preventDefault;
+    updateStatusTyping(false);
     window.location = "addFriend.html";
 })
 
 //change page to addGroupChat
 document.getElementById("addGroupChat").addEventListener("click",function(e){
     e.preventDefault;
+    updateStatusTyping(false);
     window.location = "addGroupChat.html";
 })
 
@@ -130,7 +132,7 @@ document.getElementById("message").addEventListener('keypress', function(e){
             }
         )
         document.getElementById("message").value = "";
-        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
+        // set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
 
         const memberArr = dbData["chat"][selectedChat]["member"]
         let userChatArr;
@@ -195,17 +197,34 @@ function renderChatList(){
     for(let i=chatArr.length-1;i>0;i--){
         document.getElementById(`chat-${i}`).addEventListener("click",function(e){
             e.preventDefault;
+            updateStatusTyping(false);
             selectedChat = chatArr[i];
+            renderTyping();
             renderHistoryMessage();
         })
     }
 }
 
-function isTyping(){
-    const text = document.getElementById("message").value;
-            if (text !== ""){
-                set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),true);
-            } else{
-                set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
-            }
+function renderTyping(){
+    document.getElementById("message").value = dbData["chat"][selectedChat]["isTyping"][currentUserId]["content"];
+    updateStatusTyping(isTyping());
+}
+// every after render typing, key up event listener, and visibilityState = visible
+function isTyping(){ 
+    const text =  document.getElementById("message").value;
+    if (text !== ""){
+        return true
+        } 
+    else{
+        return false
+        }
+}
+// automatically sets to false when: visibilityState = not visible, change selected chat, and change window
+function updateStatusTyping(bool){ 
+    if (bool){
+        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/status"),true)
+    }
+    else{
+        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/status"),false)
+    }
 }
