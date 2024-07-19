@@ -46,6 +46,7 @@ dbSnapshot.then((Snapshot) => {
 //everytime database is refreshed...
 onValue(dbRef, (snapshot) =>{
     dbData = snapshot.val();
+    chatArr = dbData["user"][currentUserId]["chat"];
     const chatLength = dbData["chat"][selectedChat]["historyMessage"].length;
     //sets the last message that current user sends read by status to true
     set(ref(db,"chat/" + selectedChat + "/historyMessage/" + (chatLength-1) + "/readBy/" + currentUserId),true);
@@ -59,7 +60,9 @@ set(ref(db,"user/" + currentUserId + "/isActive"),true);
 document.getElementById("message").addEventListener('keyup', function(e){
     e.preventDefault;
     const text = document.getElementById("message").value;
-    set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/content"),text);
+    if (selectedChat !== "" && selectedChat !== undefined){
+        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/content"),text);
+    }
     updateStatusTyping(isTyping());
 })
 
@@ -221,6 +224,9 @@ function isTyping(){
 }
 // automatically sets to false when: visibilityState = not visible, change selected chat, and change window
 function updateStatusTyping(bool){ 
+    if (selectedChat === "" || selectedChat == undefined){
+        return false
+    }
     if (bool){
         set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/status"),true)
     }

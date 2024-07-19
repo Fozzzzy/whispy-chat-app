@@ -100,7 +100,9 @@ async function addFriend(currentUserId, friendId) {
         // Update the var dbData
         dbRef = ref(db);
         dbSnapshot = get(dbRef);
-        dbData = dbSnapshot.val();
+        dbSnapshot.then((Snapshot) => {
+            dbData = Snapshot.val();
+          });
         return true;
 
     } catch (error) {
