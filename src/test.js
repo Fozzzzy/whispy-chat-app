@@ -32,16 +32,6 @@ let unreadChat; // stores all the chats that this user have as the KEY and numbe
 let currentUserId = window.localStorage.getItem("currentUserId"); // get the currentUserId set by login.js
 document.getElementById("test").innerText = `current user ID = ${currentUserId}`;
 
-//isActive feat
-set(ref(db,"user/" + currentUserId + "/isActive"),true);
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-        set(ref(db,"user/" + currentUserId + "/isActive"),true);
-    } else {
-        set(ref(db,"user/" + currentUserId + "/isActive"),false);
-    }
-  });
-
 
 //on start...
 dbSnapshot.then((Snapshot) => {
@@ -62,6 +52,27 @@ onValue(dbRef, (snapshot) =>{
     renderHistoryMessage();
     renderChatList();
 })
+
+//isActive isTyping feat
+set(ref(db,"user/" + currentUserId + "/isActive"),true);
+isTyping();
+    document.getElementById("message").addEventListener('keyup', function(e){
+        e.preventDefault;
+        isTyping();
+    })
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        set(ref(db,"user/" + currentUserId + "/isActive"),true);
+        isTyping();
+        document.getElementById("message").addEventListener('keyup', function(e){
+            e.preventDefault;
+            isTyping();
+        })
+    } else {    
+        set(ref(db,"user/" + currentUserId + "/isActive"),false);
+        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
+    }
+  });
 
 //log out and clears currentUsedID value in localstorage
 document.getElementById("logout").addEventListener("click",function(e){
@@ -95,16 +106,6 @@ document.getElementById("resetFriend").addEventListener("click",function(e){
         set(ref(db,"user/"+key+"/"+"unreadChat"),
             null
         )
-    }
-})
-
-document.getElementById("message").addEventListener('keyup', function(e){
-    e.preventDefault;
-    const text = document.getElementById("message").value;
-    if (text !== ""){
-        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),true);
-    } else{
-        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
     }
 })
 
@@ -198,4 +199,13 @@ function renderChatList(){
             renderHistoryMessage();
         })
     }
+}
+
+function isTyping(){
+    const text = document.getElementById("message").value;
+            if (text !== ""){
+                set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),true);
+            } else{
+                set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
+            }
 }

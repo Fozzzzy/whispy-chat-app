@@ -148,15 +148,16 @@ async function addChat(arr) {
                   userID:0,
                   content:0,
                   time:0
-              }}
+              }},
           }
       );
       let userIndex
       for (let i=1;i<arr.length;i++){
-        console.log(arr[i]);
-        userIndex = dbData["user"][arr[i]]["chat"].length;
-        set(ref(db, `user/${arr[i]}/chat/${userIndex}`),chatID);
-        set(ref(db, `user/${arr[i]}/unreadChat/${chatID}`),0);
+          console.log(arr[i]);
+          userIndex = dbData["user"][arr[i]]["chat"].length;
+          set(ref(db, `user/${arr[i]}/chat/${userIndex}`),chatID);
+          set(ref(db, `user/${arr[i]}/unreadChat/${chatID}`),0);
+          set(ref(db, `chat/${chatID}/isTyping/${arr[i]}`),false);
       }
       window.location = "test.html";
       

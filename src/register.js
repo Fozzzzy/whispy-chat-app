@@ -67,7 +67,8 @@ document.querySelector("form").addEventListener("submit", async function(e) {
       displayName:name,
       email:email,
       friends:{0:""},
-      password:password
+      password:password,
+      isActive:false
     });
     alert("Registration success");
   
@@ -108,6 +109,5 @@ togglePasswordButton.addEventListener("click", function(e) {
         eyeClosed.classList.add('hide');
         eyeOpened.classList.remove('hide');
     }
-    
     isPasswordVisible = !isPasswordVisible;
 });
