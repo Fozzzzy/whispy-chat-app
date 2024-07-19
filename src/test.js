@@ -32,6 +32,17 @@ let unreadChat; // stores all the chats that this user have as the KEY and numbe
 let currentUserId = window.localStorage.getItem("currentUserId"); // get the currentUserId set by login.js
 document.getElementById("test").innerText = `current user ID = ${currentUserId}`;
 
+//isActive feat
+set(ref(db,"user/" + currentUserId + "/isActive"),true);
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        set(ref(db,"user/" + currentUserId + "/isActive"),true);
+    } else {
+        set(ref(db,"user/" + currentUserId + "/isActive"),false);
+    }
+  });
+
+
 //on start...
 dbSnapshot.then((Snapshot) => {
     dbData = Snapshot.val();
@@ -87,10 +98,23 @@ document.getElementById("resetFriend").addEventListener("click",function(e){
     }
 })
 
-//Everytime 'enter' is pressed in message input text....
+document.getElementById("message").addEventListener('keyup', function(e){
+    e.preventDefault;
+    const text = document.getElementById("message").value;
+    if (text !== ""){
+        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),true);
+    } else{
+        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
+    }
+})
+
+//Everytime key enter is pressed in message input text....
 document.getElementById("message").addEventListener('keypress', function(e){
     if (e.key === 'Enter'){
         const text = document.getElementById("message").value;
+        if (text == ""){
+            return false;
+        }
         const date = new Date();
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
@@ -105,6 +129,8 @@ document.getElementById("message").addEventListener('keypress', function(e){
             }
         )
         document.getElementById("message").value = "";
+        set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId ),false);
+
         const memberArr = dbData["chat"][selectedChat]["member"]
         let userChatArr;
         let index;
@@ -173,27 +199,3 @@ function renderChatList(){
         })
     }
 }
-
-// $(document).ready(function() { //on document fully loaded..
-//     console.log("window is opened");
-//     set(ref(db,"user/" + currentUserId + "/isActive"),true);
-//     $(window).on('focus', function() { //detects if window is on focus
-//         console.log('Window is focused');
-//         set(ref(db,"user/" + currentUserId + "/isActive"),true);
-//     });
-//     $(window).on('blur', function() { //detects if window is on blur
-//         console.log('Window is blurred');
-//         set(ref(db,"user/" + currentUserId + "/isActive"),false);
-//     });
-//     $(window).on('beforeunload', function(e) { //detects if window is about to close
-//         set(ref(db,"user/" + currentUserId + "/isActive"),false);
-//     });
-// });
-
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-        set(ref(db,"user/" + currentUserId + "/isActive"),true);
-    } else {
-        set(ref(db,"user/" + currentUserId + "/isActive"),false);
-    }
-  });
