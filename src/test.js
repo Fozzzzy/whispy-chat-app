@@ -173,3 +173,19 @@ function renderChatList(){
         })
     }
 }
+
+$(document).ready(function() { //on document fully loaded..
+    console.log("window is opened");
+    set(ref(db,"user/" + currentUserId + "/isActive"),true);
+    $(window).on('focus', function() { //detects if window is on focus
+        console.log('Window is focused');
+        set(ref(db,"user/" + currentUserId + "/isActive"),true);
+    });
+    $(window).on('blur', function() { //detects if window is on blur
+        console.log('Window is blurred');
+        set(ref(db,"user/" + currentUserId + "/isActive"),false);
+    });
+    $(window).on('beforeunload', function(e) { //detects if window is about to close
+        set(ref(db,"user/" + currentUserId + "/isActive"),false);
+    });
+});
