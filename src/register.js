@@ -92,7 +92,7 @@ document.getElementById("login").addEventListener("click", function(e){
 const togglePasswordButton = document.querySelector('#toggle-password');
 const eyeClosed = document.querySelector('#closed-eye');
 const eyeOpened = document.querySelector('#opened-eye');
-const passwordElement = document.querySelector('#login-password');
+const passwordElement = document.querySelector('#register-password');
 let isPasswordVisible = false;
 
 togglePasswordButton.addEventListener("click", function(e) {
