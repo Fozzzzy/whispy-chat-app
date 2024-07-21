@@ -163,6 +163,7 @@ document.getElementById("message").addEventListener('keypress', function(e){
 })
 
 function renderHistoryMessage(){
+    renderMember()
     //rendering to html....
     let chatString;
     let chatHTML = "";
@@ -191,8 +192,10 @@ function renderChatList(){
     unreadChat = dbData["user"][currentUserId]["unreadChat"];
     let chatIdString;
     let chatIdHTML = "";
+    let groupName;
     for(let i=chatArr.length-1;i>0;i--){
-        chatIdString = `<button id="chat-${i}">${chatArr[i]} (${unreadChat[chatArr[i]]})</button><br>`;
+        groupName = toGroupName(chatArr[i]);
+        chatIdString = `<button id="chat-${i}">${groupName} (${unreadChat[chatArr[i]]})</button><br>`;
         chatIdHTML += chatIdString;
     }
     document.getElementById("chatList").innerHTML = chatIdHTML;
@@ -233,4 +236,45 @@ function updateStatusTyping(bool){
     else{
         set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/status"),false)
     }
+    renderMember();
+}
+
+function toGroupName(chatID){
+    const memberArr = dbData["chat"][chatID]["member"];
+    function checkName(currentName){
+        return currentName !== currentUserId && currentName !== ""
+    }
+    let userIdArr = memberArr.filter(checkName);
+    function toDisplayName(userID){
+        return dbData["user"][userID]['displayName']
+    }
+    let nameArr = userIdArr.map(toDisplayName);
+    let groupName = nameArr.join(", ");
+    return groupName;
+}
+
+function renderMember(){
+    const memberArr = dbData["chat"][selectedChat]["member"];
+    function checkName(currentName){
+        return currentName !== ""
+    }
+    let userIdArr = memberArr.filter(checkName);
+    function toDisplayName(userID){
+        return dbData["user"][userID]['displayName']
+    }
+    let nameArr = userIdArr.map(toDisplayName);
+    let currentUser;
+    let isActive;
+    let isTyping;
+    let memberString;
+    let memberHTML = "";
+    for (let i=0;i<nameArr.length;i++){
+        currentUser = userIdArr[i];
+        isActive = dbData["user"][currentUser]["isActive"];
+        isTyping = dbData["chat"][selectedChat]["isTyping"][currentUser]["status"];
+        memberString = `<p>${currentUser}, isActive: ${isActive}, isTyping: ${isTyping} </p>`
+        memberHTML += memberString
+    }
+    document.getElementById("chatMember").innerHTML = memberHTML;
+    console.log("memberRendered!");
 }
