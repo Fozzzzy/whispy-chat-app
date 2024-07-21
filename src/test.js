@@ -167,10 +167,12 @@ function renderHistoryMessage(){
     //rendering to html....
     let chatString;
     let chatHTML = "";
+    let displayName;
     const historyArr = dbData["chat"][selectedChat]["historyMessage"];
     for(let i=historyArr.length-1;i>0;i--){
+        displayName = dbData["user"][historyArr[i]["userID"]]["displayName"]
         chatString = `<p>
-        ${historyArr[i]["userID"]}:
+        ${displayName}:
         ${historyArr[i]["content"]}
         (${historyArr[i]["time"]})
         </p>`
@@ -276,5 +278,4 @@ function renderMember(){
         memberHTML += memberString
     }
     document.getElementById("chatMember").innerHTML = memberHTML;
-    console.log("memberRendered!");
 }
