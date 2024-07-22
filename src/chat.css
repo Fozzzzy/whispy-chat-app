@@ -27,8 +27,8 @@ body {
     filter: brightness(2);
 }
 
-.friend-header {
-    height: 57px;
+.friend-header, .chat-header {
+    min-height: 60px !important;
     border-bottom: 1px solid rgba(167, 139, 250, 0.2);
 }
 
@@ -72,9 +72,7 @@ h5 {
 }
 
 .chat-header {
-    height: 57px;
     background-color: #120f33;
-    border-bottom: 1px solid rgba(167, 139, 250, 0.2);
 }
 
 .chat-messages {
@@ -91,14 +89,20 @@ h5 {
     clear: both;
 }
 
+.message-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 10px;
+}
+
 .message-received {
     background-color: rgba(167, 139, 250, 0.2);
-    float: left;
+    float: left !important;
 }
 
 .message-sent {
-    background-color: rgb(99, 65, 201);
-    float: right;
+    background-color: rgb(57, 22, 161);
+    float: right !important;
 }
 
 .chat-input {
@@ -110,8 +114,12 @@ h5 {
 .chat-input input {
     background-color: rgba(167, 139, 250, 0.1);
     border: none;
-    color: white;
+    color: rgb(224, 224, 224) !important;
     height: 2.5rem !important;
+}
+
+.chat-input input::placeholder {
+    color: rgb(224, 224, 224) !important;
 }
 
 .chat-input input:focus {

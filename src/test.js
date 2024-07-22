@@ -122,9 +122,24 @@ document.getElementById("message").addEventListener('keypress', function(e){
             return false;
         }
         const date = new Date();
-        const hours = date.getHours().toString().padStart(2, '0');
+        let hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
-        const time = `${hours}:${minutes}`;
+        let period = "AM";
+
+        if (hours >= 12) {
+            period = "PM";
+            if (hours > 12) {
+                hours = hours - 12;
+            }
+        }
+
+        if (hours === 0) {
+            hours = 12;
+        }
+
+        const time = `${hours.toString().padStart(2, '0')}:${minutes} ${period}`;
+
+
         let count = dbData["chat"][selectedChat]["historyMessage"].length;
         //create new message and put it into database
         set(ref(db,"chat/"+selectedChat+"/"+"historyMessage/"+count), 
@@ -186,11 +201,11 @@ function renderHistoryMessage(){
         // Add to HTML
         chatString = `
         <div>
-            <p class="${messageClass} message">
-                ${displayName}:
+            <div class="${messageClass} message">
+                <div class="mb-1 fw-bold">${displayName}</div>
                 ${historyArr[i]["content"]}
-                (${historyArr[i]["time"]})
-            </p>
+                 <span class="message-time">${historyArr[i]["time"]}</span>
+            </div>
         </div>
         `
         chatHTML += chatString;
@@ -319,4 +334,9 @@ function renderMember(){
         memberHTML += memberString
     }
     document.getElementById("chatMember").innerHTML = memberHTML;
+}
+
+function showIsTyping() {
+    let statusElement = document.querySelector('.status');
+    
 }
