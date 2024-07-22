@@ -30,7 +30,7 @@ let dbSnapshot = get(dbRef);
 let dbData; //sets the database as an object variable
 let unreadChat; // stores all the chats that this user have as the KEY and number of unread messages as the VALUE
 let currentUserId = window.localStorage.getItem("currentUserId"); // get the currentUserId set by login.js
-document.getElementById("test").innerText = `current user ID = ${currentUserId}`;
+// document.getElementById("test").innerText = `current user ID = ${currentUserId}`;
 
 
 //on start...
@@ -99,20 +99,20 @@ document.getElementById("addGroupChat").addEventListener("click",function(e){
 })
 
 // Dont press this unless u want to reset the friends all users have to zero
-document.getElementById("resetFriend").addEventListener("click",function(e){
-    e.preventDefault();
-    for (const [key, values] of Object.entries(dbData["user"])) {
-        set(ref(db,"user/"+key+"/"+"friends"),
-            {0:""}
-        )
-        set(ref(db,"user/"+key+"/"+"chat"),
-            {0:""}
-        )
-        set(ref(db,"user/"+key+"/"+"unreadChat"),
-            null
-        )
-    }
-})
+// document.getElementById("resetFriend").addEventListener("click",function(e){
+//     e.preventDefault();
+//     for (const [key, values] of Object.entries(dbData["user"])) {
+//         set(ref(db,"user/"+key+"/"+"friends"),
+//             {0:""}
+//         )
+//         set(ref(db,"user/"+key+"/"+"chat"),
+//             {0:""}
+//         )
+//         set(ref(db,"user/"+key+"/"+"unreadChat"),
+//             null
+//         )
+//     }
+// })
 
 //Everytime key enter is pressed in message input text....
 document.getElementById("message").addEventListener('keypress', function(e){
@@ -168,16 +168,34 @@ function renderHistoryMessage(){
     let chatString;
     let chatHTML = "";
     let displayName;
+    let messageClass;
     const historyArr = dbData["chat"][selectedChat]["historyMessage"];
+
     for(let i=historyArr.length-1;i>0;i--){
+        const message = historyArr[i];
+        
+        // Check if message from current user or not
+        if (message["userID"] == currentUserId) {
+            messageClass = "message-sent";
+        } else {
+            messageClass = "message-received";
+        }
+
         displayName = dbData["user"][historyArr[i]["userID"]]["displayName"]
-        chatString = `<p>
-        ${displayName}:
-        ${historyArr[i]["content"]}
-        (${historyArr[i]["time"]})
-        </p>`
+
+        // Add to HTML
+        chatString = `
+        <div>
+            <p class="${messageClass} message">
+                ${displayName}:
+                ${historyArr[i]["content"]}
+                (${historyArr[i]["time"]})
+            </p>
+        </div>
+        `
         chatHTML += chatString;
     }
+
     document.getElementById("history-message").innerHTML = chatHTML;
     // after rendering of a chat, reset the unread message of the chat to 0, set read by status to all messages to true for current user
     const chatLength = dbData["chat"][selectedChat]["historyMessage"].length
@@ -195,10 +213,32 @@ function renderChatList(){
     let chatIdString;
     let chatIdHTML = "";
     let groupName;
+
     for(let i=chatArr.length-1;i>0;i--){
         groupName = toGroupName(chatArr[i]);
-        chatIdString = `<button id="chat-${i}">${groupName} (${unreadChat[chatArr[i]]})</button><br>`;
+
+        // Check chat selected
+        let chatClass = ''
+        if (selectedChat === chatArr[i]) {
+            chatClass = 'chat-selected'; 
+        }
+
+        chatIdString = `
+        <div class="friend-item d-flex align-items-center p-3 mb-2 rounded ${chatClass}" id="chat-${i}">
+                <div class="rounded-circle bg-white me-3" style="min-width: 40px; height: 40px;"></div>
+                <div class="d-flex flex-column">
+                    <div class="group-name fw-bold">${groupName}</div>
+                </div>
+                <div class="ms-auto">
+                    <span class="unread-count d-flex align-items-center justify-content-center">${unreadChat[chatArr[i]]}</span>
+                </div>
+            </div>`;
+
+        // left/Right Chat Float
+        
         chatIdHTML += chatIdString;
+
+        document.querySelector('.friend-name-header').innerText = `${groupName}`;
     }
     document.getElementById("chatList").innerHTML = chatIdHTML;
     //add a event listener for every button that is rendered. If clicked, the selectedChat value is set to the newest
@@ -209,6 +249,7 @@ function renderChatList(){
             selectedChat = chatArr[i];
             renderTyping();
             renderHistoryMessage();
+            renderChatList()
         })
     }
 }
