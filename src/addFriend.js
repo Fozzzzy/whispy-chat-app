@@ -153,6 +153,6 @@ async function addChat(currentUserId, friendId) {
 //Go back to message page
 document.getElementById("goBack").addEventListener("click",function(e){
     e.preventDefault;
-    window.location = "test.html";
+    window.location = "chat.html";
 })
 
