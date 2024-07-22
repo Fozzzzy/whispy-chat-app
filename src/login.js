@@ -61,7 +61,7 @@ document.querySelector("form").addEventListener("submit", async function(e) {
       if (passwordCorrect) {
         alert("Login successful");
         window.localStorage.setItem("currentUserId", userId);
-        window.location = "test.html";
+        window.location = "chat.html";
       } else {
         alert("Wrong password");
       }
