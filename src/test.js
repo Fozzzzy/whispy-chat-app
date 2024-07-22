@@ -58,7 +58,7 @@ onValue(dbRef, (snapshot) =>{
 //isActive isTyping feat
 set(ref(db,"user/" + currentUserId + "/isActive"),true);
 document.getElementById("message").addEventListener('keyup', function(e){
-    e.preventDefault;
+    e.preventDefault();
     const text = document.getElementById("message").value;
     if (selectedChat !== "" && selectedChat !== undefined){
         set(ref(db,"chat/" + selectedChat + "/isTyping/" + currentUserId + "/content"),text);
@@ -78,7 +78,7 @@ document.addEventListener('visibilitychange', function() {
 
 //log out and clears currentUsedID value in localstorage
 document.getElementById("logout").addEventListener("click",function(e){
-    e.preventDefault;
+    e.preventDefault();
     updateStatusTyping(false);
     window.localStorage.clear();
     window.location = "index.html";
@@ -86,21 +86,21 @@ document.getElementById("logout").addEventListener("click",function(e){
 
 //change page to addfriend
 document.getElementById("addFriend").addEventListener("click",function(e){
-    e.preventDefault;
+    e.preventDefault();
     updateStatusTyping(false);
     window.location = "addFriend.html";
 })
 
 //change page to addGroupChat
 document.getElementById("addGroupChat").addEventListener("click",function(e){
-    e.preventDefault;
+    e.preventDefault();
     updateStatusTyping(false);
     window.location = "addGroupChat.html";
 })
 
 // Dont press this unless u want to reset the friends all users have to zero
 document.getElementById("resetFriend").addEventListener("click",function(e){
-    e.preventDefault;
+    e.preventDefault();
     for (const [key, values] of Object.entries(dbData["user"])) {
         set(ref(db,"user/"+key+"/"+"friends"),
             {0:""}
@@ -204,7 +204,7 @@ function renderChatList(){
     //add a event listener for every button that is rendered. If clicked, the selectedChat value is set to the newest
     for(let i=chatArr.length-1;i>0;i--){
         document.getElementById(`chat-${i}`).addEventListener("click",function(e){
-            e.preventDefault;
+            e.preventDefault();
             updateStatusTyping(false);
             selectedChat = chatArr[i];
             renderTyping();
