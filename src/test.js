@@ -48,8 +48,11 @@ onValue(dbRef, (snapshot) =>{
     dbData = snapshot.val();
     chatArr = dbData["user"][currentUserId]["chat"];
     const chatLength = dbData["chat"][selectedChat]["historyMessage"].length;
+    
     //sets the last message that current user sends read by status to true
     set(ref(db,"chat/" + selectedChat + "/historyMessage/" + (chatLength-1) + "/readBy/" + currentUserId),true);
+
+
     //refreshes history message and chatlist
     renderHistoryMessage();
     renderChatList();
@@ -238,6 +241,10 @@ function renderChatList(){
             chatClass = 'chat-selected'; 
         }
 
+        // Check unread messages
+        let unreadCount = unreadChat[chatArr[i]] || 0;
+        let unreadCountClass = unreadCount > 0 ? 'd-flex' : 'd-none';
+
         chatIdString = `
         <div class="friend-item d-flex align-items-center p-3 mb-2 rounded ${chatClass}" id="chat-${i}">
                 <div class="rounded-circle bg-white me-3" style="min-width: 40px; height: 40px;"></div>
@@ -245,7 +252,7 @@ function renderChatList(){
                     <div class="group-name fw-bold">${groupName}</div>
                 </div>
                 <div class="ms-auto">
-                    <span class="unread-count d-flex align-items-center justify-content-center">${unreadChat[chatArr[i]]}</span>
+                    <span class="unread-count ${unreadCountClass} align-items-center justify-content-center">${unreadChat[chatArr[i]]}</span>
                 </div>
             </div>`;
 

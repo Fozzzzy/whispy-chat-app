@@ -3,7 +3,7 @@ body {
     color: #ffffff !important;
 }
 .nav-column {
-    background-color: #0a081b;
+    background-color: #050414;
     width: 60px;
     flex: 0 0 60px;
 }
@@ -33,7 +33,7 @@ body {
 }
 
 .friend-list {
-    background-color: #120f33;
+    background-color: #0d0b29;
     height: 100vh;
     overflow-y: auto;
 }
