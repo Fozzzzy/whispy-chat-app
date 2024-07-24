@@ -248,7 +248,7 @@ function renderChatList(){
         let unreadCountClass = unreadCount > 0 ? 'd-flex' : 'd-none';
 
         chatIdString = `
-        <div class="friend-item d-flex align-items-center px-3 py-4 ${chatClass}" id="chat-${i}">
+        <div class="friend-item d-flex align-items-center rounded mb-2 p-3 ${chatClass}" id="chat-${i}">
                 <div class="rounded-circle bg-white me-3" style="min-width: 40px; height: 40px;"></div>
                 <div class="d-flex flex-column">
                     <div class="group-name">${groupName}</div>
