@@ -180,6 +180,7 @@ document.getElementById("message").addEventListener('keypress', function(e){
     }
 })
 
+// Function to render chat history message
 function renderHistoryMessage(){
     renderMember()
     //rendering to html....
@@ -224,6 +225,7 @@ function renderHistoryMessage(){
     set(ref(db,"user/" + currentUserId + "/unreadChat/" + selectedChat),0);
 }
 
+// Function to render chat/friend list
 function renderChatList(){
     //rendering to html...
     chatArr = dbData["user"][currentUserId]["chat"];
@@ -246,10 +248,10 @@ function renderChatList(){
         let unreadCountClass = unreadCount > 0 ? 'd-flex' : 'd-none';
 
         chatIdString = `
-        <div class="friend-item d-flex align-items-center p-3 mb-2 rounded ${chatClass}" id="chat-${i}">
+        <div class="friend-item d-flex align-items-center px-3 py-4 ${chatClass}" id="chat-${i}">
                 <div class="rounded-circle bg-white me-3" style="min-width: 40px; height: 40px;"></div>
                 <div class="d-flex flex-column">
-                    <div class="group-name fw-bold">${groupName}</div>
+                    <div class="group-name">${groupName}</div>
                 </div>
                 <div class="ms-auto">
                     <span class="unread-count ${unreadCountClass} align-items-center justify-content-center">${unreadChat[chatArr[i]]}</span>
@@ -259,10 +261,12 @@ function renderChatList(){
         // left/Right Chat Float
         
         chatIdHTML += chatIdString;
-
-        document.querySelector('.friend-name-header').innerText = `${groupName}`;
     }
     document.getElementById("chatList").innerHTML = chatIdHTML;
+
+    // Update chat header on initial open
+    updateChatHeader()
+
     //add a event listener for every button that is rendered. If clicked, the selectedChat value is set to the newest
     for(let i=chatArr.length-1;i>0;i--){
         document.getElementById(`chat-${i}`).addEventListener("click",function(e){
@@ -271,11 +275,19 @@ function renderChatList(){
             selectedChat = chatArr[i];
             renderTyping();
             renderHistoryMessage();
-            renderChatList()
+            renderChatList();
+            updateChatHeader();
         })
     }
 }
 
+// Function to update friend name header
+function updateChatHeader() {
+    let groupName = toGroupName(selectedChat);
+    document.querySelector('.friend-name-header').innerText = groupName;
+}
+
+// Function to render typing status
 function renderTyping(){
     document.getElementById("message").value = dbData["chat"][selectedChat]["isTyping"][currentUserId]["content"];
     updateStatusTyping(isTyping());
@@ -318,6 +330,8 @@ function toGroupName(chatID){
     return groupName;
 }
 
+
+
 function renderMember(){
     const memberArr = dbData["chat"][selectedChat]["member"];
     function checkName(currentName){
@@ -341,9 +355,4 @@ function renderMember(){
         memberHTML += memberString
     }
     document.getElementById("chatMember").innerHTML = memberHTML;
-}
-
-function showIsTyping() {
-    let statusElement = document.querySelector('.status');
-    
 }
