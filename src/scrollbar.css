@@ -1,0 +1,33 @@
+
+::-webkit-scrollbar {
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+/* Scrollbar track */
+::-webkit-scrollbar-track {
+    background-color: #070616;
+    margin-block: 0.2em;
+    border-radius: 4px;
+}
+
+/* Scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    background-color: #b4b4b4;
+    border-radius: 4px;
+}
+
+/* Remove arrow buttons */
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* Show scrollbar on hover for chat messages and friend list */
+.friend-list-container:hover::-webkit-scrollbar {
+    width: 0.3em;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 0.3em;
+}
+
