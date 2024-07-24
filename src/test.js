@@ -206,9 +206,11 @@ function renderHistoryMessage(){
         chatString = `
         <div>
             <div class="${messageClass} message">
-                <div class="mb-1 fw-bold">${displayName}</div>
-                ${historyArr[i]["content"]}
-                 <span class="message-time">${historyArr[i]["time"]}</span>
+                <div class="display-name mb-1 fw-bold">${displayName}</div>
+                <div class="message-content-wrapper">
+                    <span class="message-content">${historyArr[i]["content"]}</span>
+                    <span class="message-time">${historyArr[i]["time"]}</span>
+                </div>
             </div>
         </div>
         `

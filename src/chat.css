@@ -105,13 +105,28 @@ h5 {
     border-radius: 1rem;
     max-width: 80%;
     clear: both;
+}
+
+.message-content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.display-name, .message-content {
     word-break: break-word;
 }
 
+.message-content {
+    margin-right: 10px;
+}
+
 .message-time {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.7);
-    margin-left: 10px;
+    margin-left: auto;
+    align-self: flex-end;
 }
 
 .message-received {
@@ -133,12 +148,14 @@ h5 {
 .chat-input input {
     background-color: rgba(167, 139, 250, 0.1);
     border: none;
+    padding: 1.4rem 1rem;
+    border-radius: 10px;
     color: rgb(224, 224, 224) !important;
     height: 2.5rem !important;
 }
 
 .chat-input input::placeholder {
-    color: rgb(224, 224, 224) !important;
+    color: rgba(224, 224, 224, 0.308) !important;
 }
 
 .chat-input input:focus {
